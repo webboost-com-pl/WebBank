@@ -149,3 +149,8 @@ async function checkSession() {
 }
 
 checkSession();
+
+window.register = register;
+window.login = login;
+window.deposit = deposit;
+window.logout = logout;
