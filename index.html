@@ -6,9 +6,35 @@
 </head>
 <body>
   <h1>WebBank</h1>
-  <p>Aplikacja bankowa testowa.</p>
 
-  <button>Załóż konto</button>
-  <button>Zaloguj się</button>
+  <h2>Rejestracja</h2>
+  <input id="registerEmail" type="email" placeholder="Email">
+  <input id="registerPassword" type="password" placeholder="Hasło">
+  <button onclick="register()">Załóż konto</button>
+
+  <h2>Logowanie</h2>
+  <input id="loginEmail" type="email" placeholder="Email">
+  <input id="loginPassword" type="password" placeholder="Hasło">
+  <button onclick="login()">Zaloguj</button>
+
+  <hr>
+
+  <div id="panel" style="display:none;">
+    <h2>Panel konta</h2>
+    <p id="userEmail"></p>
+    <h3>Saldo: <span id="balance">0</span> zł</h3>
+
+    <h3>Wpłata testowa</h3>
+    <input id="depositAmount" type="number" placeholder="Kwota">
+    <button onclick="deposit()">Dodaj środki</button>
+
+    <h3>Historia</h3>
+    <ul id="history"></ul>
+
+    <button onclick="logout()">Wyloguj</button>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="app.js"></script>
 </body>
 </html>
