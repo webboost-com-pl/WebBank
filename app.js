@@ -1,13 +1,12 @@
 const SUPABASE_URL = "https://siikexaywqxebiggjhez.supabase.co";
 const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNpaWtleGF5d3F4ZWJpZ2dqaGV6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODAwODQwNDMsImV4cCI6MjA5NTY2MDA0M30.NaqKoAPHC4fo3LIoTEFXAZq3NNjVUeLf1Ugqo6JFvLI";
 
-const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-
+const db = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 async function register() {
   const email = document.getElementById("registerEmail").value;
   const password = document.getElementById("registerPassword").value;
 
-  const { error } = await supabase.auth.signUp({
+  const { error } = await db.auth.signUp({
     email: email,
     password: password
   });
@@ -23,7 +22,7 @@ async function login() {
   const email = document.getElementById("loginEmail").value;
   const password = document.getElementById("loginPassword").value;
 
-  const { data, error } = await supabase.auth.signInWithPassword({
+  const { data, error } = await db.auth.signInWithPassword({
     email: email,
     password: password
   });
@@ -38,14 +37,14 @@ async function login() {
 }
 
 async function createBankAccountIfNeeded(user) {
-  const { data: existingAccount } = await supabase
+  const { data: existingAccount } = await db
     .from("bank_accounts")
     .select("*")
     .eq("user_id", user.id)
     .single();
 
   if (!existingAccount) {
-    await supabase
+    await db
       .from("bank_accounts")
       .insert({
         user_id: user.id,
@@ -63,7 +62,7 @@ async function showPanel(user) {
 }
 
 async function loadBalance() {
-  const { data, error } = await supabase
+  const { data, error } = await db
     .from("bank_accounts")
     .select("balance")
     .single();
@@ -84,21 +83,21 @@ async function deposit() {
     return;
   }
 
-  const { data: account } = await supabase
+  const { data: account } = await db
     .from("bank_accounts")
     .select("*")
     .single();
 
   const newBalance = Number(account.balance) + amount;
 
-  await supabase
+  await db
     .from("bank_accounts")
     .update({ balance: newBalance })
     .eq("id", account.id);
 
-  const { data: userData } = await supabase.auth.getUser();
+  const { data: userData } = await db.auth.getUser();
 
-  await supabase
+  await db
     .from("transactions")
     .insert({
       user_id: userData.user.id,
@@ -114,7 +113,7 @@ async function deposit() {
 }
 
 async function loadHistory() {
-  const { data, error } = await supabase
+  const { data, error } = await db
     .from("transactions")
     .select("*")
     .order("created_at", { ascending: false });
@@ -135,12 +134,12 @@ async function loadHistory() {
 }
 
 async function logout() {
-  await supabase.auth.signOut();
+  await db.auth.signOut();
   location.reload();
 }
 
 async function checkSession() {
-  const { data } = await supabase.auth.getUser();
+  const { data } = await db.auth.getUser();
 
   if (data.user) {
     await createBankAccountIfNeeded(data.user);
