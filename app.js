@@ -81,19 +81,24 @@ async function createBankAccountIfNeeded(user) {
     await loadHistory();
   }
 
-  async function loadBalance() {
-    const { data, error } = await db
-      .from("bank_accounts")
-      .select("balance")
-      .maybeSingle();
+ async function loadBalance() {
+  const { data, error } = await db
+    .from("bank_accounts")
+    .select("balance, account_number")
+    .maybeSingle();
 
-    if (error) {
-      alert(error.message);
-      return;
-    }
-
-    document.getElementById("balance").textContent = data ? data.balance : 0;
+  if (error) {
+    alert(error.message);
+    return;
   }
+
+  document.getElementById("balance").textContent = data ? data.balance : 0;
+
+  if (document.getElementById("accountNumber")) {
+    document.getElementById("accountNumber").textContent =
+      data && data.account_number ? data.account_number : "Brak numeru";
+  }
+}
 
   window.deposit = async function () {
     const amount = Number(document.getElementById("depositAmount").value);
