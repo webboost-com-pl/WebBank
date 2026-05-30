@@ -33,21 +33,35 @@
     await createBankAccountIfNeeded(data.user);
     window.location.href = "dashboard.html";
   };
+function generateAccountNumber() {
+  return "WB" + Math.floor(
+    1000000000 + Math.random() * 9000000000
+  );
+}
+async function createBankAccountIfNeeded(user) {
+  const { data, error } = await db
+    .from("bank_accounts")
+    .select("*")
+    .eq("user_id", user.id)
+    .maybeSingle();
 
-  async function createBankAccountIfNeeded(user) {
-    const { data } = await db
-      .from("bank_accounts")
-      .select("*")
-      .eq("user_id", user.id)
-      .maybeSingle();
+  if (error) {
+    alert("Błąd sprawdzania konta: " + error.message);
+    return;
+  }
 
-    if (!data) {
-      await db.from("bank_accounts").insert({
-        user_id: user.id,
-        balance: 0
-      });
+  if (!data) {
+    const { error: insertError } = await db.from("bank_accounts").insert({
+      user_id: user.id,
+      balance: 0,
+      account_number: generateAccountNumber()
+    });
+
+    if (insertError) {
+      alert("Błąd tworzenia konta bankowego: " + insertError.message);
     }
   }
+}
 
   async function loadDashboard() {
     if (!document.getElementById("balance")) return;
