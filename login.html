@@ -1,17 +1,238 @@
 <!DOCTYPE html>
 <html lang="pl">
 <head>
-  <meta charset="UTF-8">
-  <title>Logowanie - WebBank</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Logowanie — WebBank</title>
+
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+
+    body {
+      min-height: 100vh;
+      background:
+        radial-gradient(circle at 15% 10%, rgba(59,130,246,0.28), transparent 32%),
+        radial-gradient(circle at 85% 80%, rgba(14,165,233,0.18), transparent 30%),
+        #050816;
+      color: white;
+      display: grid;
+      place-items: center;
+      padding: 24px;
+    }
+
+    .auth-page {
+      width: 100%;
+      max-width: 1080px;
+      display: grid;
+      grid-template-columns: 1fr 430px;
+      gap: 30px;
+      align-items: center;
+      animation: enter .7s ease both;
+    }
+
+    .left {
+      padding: 40px;
+    }
+
+    .logo {
+      display: inline-flex;
+      align-items: center;
+      gap: 12px;
+      font-size: 24px;
+      font-weight: 850;
+      margin-bottom: 40px;
+    }
+
+    .logo-mark {
+      width: 44px;
+      height: 44px;
+      border-radius: 16px;
+      background: linear-gradient(135deg, #38bdf8, #2563eb);
+      display: grid;
+      place-items: center;
+      box-shadow: 0 18px 42px rgba(37,99,235,.38);
+    }
+
+    h1 {
+      font-size: clamp(44px, 6vw, 76px);
+      line-height: .95;
+      letter-spacing: -0.07em;
+      margin-bottom: 22px;
+    }
+
+    .accent {
+      background: linear-gradient(135deg, #7dd3fc, #60a5fa, #fff);
+      -webkit-background-clip: text;
+      color: transparent;
+    }
+
+    .desc {
+      color: #a5b4fc;
+      font-size: 18px;
+      line-height: 1.7;
+      max-width: 560px;
+    }
+
+    .card {
+      padding: 32px;
+      border-radius: 30px;
+      background: rgba(15, 23, 42, .72);
+      border: 1px solid rgba(255,255,255,.12);
+      backdrop-filter: blur(22px);
+      box-shadow: 0 35px 90px rgba(0,0,0,.45);
+    }
+
+    .card h2 {
+      font-size: 28px;
+      margin-bottom: 8px;
+      letter-spacing: -0.04em;
+    }
+
+    .muted {
+      color: #94a3b8;
+      font-size: 14px;
+      line-height: 1.5;
+      margin-bottom: 24px;
+    }
+
+    label {
+      display: block;
+      color: #cbd5e1;
+      font-size: 13px;
+      margin-bottom: 8px;
+      font-weight: 700;
+    }
+
+    .field {
+      margin-bottom: 16px;
+    }
+
+    input {
+      width: 100%;
+      border: 1px solid rgba(255,255,255,.12);
+      background: rgba(2, 6, 23, .58);
+      color: white;
+      border-radius: 16px;
+      padding: 15px 16px;
+      outline: none;
+      font-size: 15px;
+      transition: .2s;
+    }
+
+    input:focus {
+      border-color: #38bdf8;
+      box-shadow: 0 0 0 4px rgba(56,189,248,.12);
+    }
+
+    button {
+      width: 100%;
+      margin-top: 8px;
+      border: none;
+      border-radius: 16px;
+      padding: 15px 18px;
+      background: linear-gradient(135deg, #38bdf8, #2563eb);
+      color: white;
+      font-weight: 850;
+      cursor: pointer;
+      transition: .2s;
+      font-size: 15px;
+      box-shadow: 0 18px 42px rgba(37,99,235,.30);
+    }
+
+    button:hover {
+      transform: translateY(-2px);
+    }
+
+    .links {
+      margin-top: 22px;
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      flex-wrap: wrap;
+      font-size: 14px;
+    }
+
+    a {
+      color: #7dd3fc;
+      text-decoration: none;
+      font-weight: 700;
+    }
+
+    a:hover {
+      text-decoration: underline;
+    }
+
+    .back {
+      display: inline-flex;
+      margin-top: 24px;
+      color: #94a3b8;
+    }
+
+    @keyframes enter {
+      from { opacity: 0; transform: translateY(22px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @media (max-width: 850px) {
+      .auth-page {
+        grid-template-columns: 1fr;
+      }
+
+      .left {
+        padding: 10px 0;
+      }
+    }
+  </style>
 </head>
+
 <body>
-  <h1>Logowanie</h1>
+  <main class="auth-page">
+    <section class="left">
+      <div class="logo">
+        <div class="logo-mark">WB</div>
+        WebBank
+      </div>
 
-  <input id="loginEmail" type="email" placeholder="Email">
-  <input id="loginPassword" type="password" placeholder="Hasło">
-  <button onclick="login()">Zaloguj</button>
+      <h1>
+        Witaj ponownie<br>
+        w swoim <span class="accent">panelu.</span>
+      </h1>
 
-  <p>Nie masz konta? <a href="register.html">Załóż konto</a></p>
+      <p class="desc">
+        Zaloguj się do bankowości online i sprawdź saldo, historię operacji
+        oraz aktywność swojego konta.
+      </p>
+
+      <a class="back" href="index.html">← Wróć na stronę główną</a>
+    </section>
+
+    <section class="card">
+      <h2>Logowanie</h2>
+      <p class="muted">Wpisz dane dostępu do swojego konta.</p>
+
+      <div class="field">
+        <label>Email</label>
+        <input id="loginEmail" type="email" placeholder="twoj@email.com">
+      </div>
+
+      <div class="field">
+        <label>Hasło</label>
+        <input id="loginPassword" type="password" placeholder="Twoje hasło">
+      </div>
+
+      <button onclick="login()">Zaloguj się</button>
+
+      <div class="links">
+        <span>Nie masz konta?</span>
+        <a href="register.html">Otwórz konto</a>
+      </div>
+    </section>
+  </main>
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="app.js"></script>
