@@ -12,9 +12,11 @@
 
     if (error) {
       alert(error.message);
-    } else {
-      alert("Konto utworzone. Możesz się zalogować.");
+      return;
     }
+
+    alert("Konto utworzone. Teraz się zaloguj.");
+    window.location.href = "login.html";
   };
 
   window.login = async function () {
@@ -29,34 +31,38 @@
     }
 
     await createBankAccountIfNeeded(data.user);
-    await showPanel(data.user);
+    window.location.href = "dashboard.html";
   };
 
   async function createBankAccountIfNeeded(user) {
-    const { data: existingAccount } = await db
+    const { data } = await db
       .from("bank_accounts")
       .select("*")
       .eq("user_id", user.id)
       .maybeSingle();
 
-    if (!existingAccount) {
-      const { error } = await db
-        .from("bank_accounts")
-        .insert({
-          user_id: user.id,
-          balance: 0
-        });
-
-      if (error) {
-        alert("Błąd tworzenia konta bankowego: " + error.message);
-      }
+    if (!data) {
+      await db.from("bank_accounts").insert({
+        user_id: user.id,
+        balance: 0
+      });
     }
   }
 
-  async function showPanel(user) {
-    document.getElementById("panel").style.display = "block";
-    document.getElementById("userEmail").textContent = "Zalogowano jako: " + user.email;
+  async function loadDashboard() {
+    if (!document.getElementById("balance")) return;
 
+    const { data: userData } = await db.auth.getUser();
+
+    if (!userData.user) {
+      window.location.href = "login.html";
+      return;
+    }
+
+    document.getElementById("userEmail").textContent =
+      "Zalogowano jako: " + userData.user.email;
+
+    await createBankAccountIfNeeded(userData.user);
     await loadBalance();
     await loadHistory();
   }
@@ -68,13 +74,11 @@
       .maybeSingle();
 
     if (error) {
-      alert("Błąd pobierania salda: " + error.message);
+      alert(error.message);
       return;
     }
 
-    if (data) {
-      document.getElementById("balance").textContent = data.balance;
-    }
+    document.getElementById("balance").textContent = data ? data.balance : 0;
   }
 
   window.deposit = async function () {
@@ -85,55 +89,37 @@
       return;
     }
 
-    const { data: account, error: accountError } = await db
+    const { data: account } = await db
       .from("bank_accounts")
       .select("*")
       .maybeSingle();
 
-    if (accountError || !account) {
-      alert("Nie znaleziono konta bankowego.");
-      return;
-    }
-
     const newBalance = Number(account.balance) + amount;
 
-    const { error: updateError } = await db
+    await db
       .from("bank_accounts")
       .update({ balance: newBalance })
       .eq("id", account.id);
 
-    if (updateError) {
-      alert("Błąd aktualizacji salda: " + updateError.message);
-      return;
-    }
-
     const { data: userData } = await db.auth.getUser();
 
-    await db
-      .from("transactions")
-      .insert({
-        user_id: userData.user.id,
-        type: "Wpłata",
-        amount: amount,
-        description: "Wpłata testowa"
-      });
+    await db.from("transactions").insert({
+      user_id: userData.user.id,
+      type: "Wpłata",
+      amount,
+      description: "Wpłata testowa"
+    });
 
     document.getElementById("depositAmount").value = "";
-
     await loadBalance();
     await loadHistory();
   };
 
   async function loadHistory() {
-    const { data, error } = await db
+    const { data } = await db
       .from("transactions")
       .select("*")
       .order("created_at", { ascending: false });
-
-    if (error) {
-      alert("Błąd historii: " + error.message);
-      return;
-    }
 
     const history = document.getElementById("history");
     history.innerHTML = "";
@@ -147,17 +133,8 @@
 
   window.logout = async function () {
     await db.auth.signOut();
-    location.reload();
+    window.location.href = "index.html";
   };
 
-  async function checkSession() {
-    const { data } = await db.auth.getUser();
-
-    if (data.user) {
-      await createBankAccountIfNeeded(data.user);
-      await showPanel(data.user);
-    }
-  }
-
-  checkSession();
+  loadDashboard();
 })();
