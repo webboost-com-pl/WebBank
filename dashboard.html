@@ -1,1 +1,24 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+  <meta charset="UTF-8">
+  <title>Panel - WebBank</title>
+</head>
+<body>
+  <h1>Panel konta</h1>
 
+  <p id="userEmail"></p>
+  <h2>Saldo: <span id="balance">0</span> zł</h2>
+
+  <input id="depositAmount" type="number" placeholder="Kwota">
+  <button onclick="deposit()">Dodaj środki</button>
+
+  <h2>Historia</h2>
+  <ul id="history"></ul>
+
+  <button onclick="logout()">Wyloguj</button>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="app.js"></script>
+</body>
+</html>
